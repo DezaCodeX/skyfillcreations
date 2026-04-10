@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg: 11 11 11;
+    --surface: 26 26 26;
+    --surface-2: 32 32 32;
+    --brand-1: 245 166 35;
+    --brand-2: 255 210 122;
+    --platinum: 229 229 229;
+    --muted: 156 163 175;
+  }
+
+  * {
+    @apply border-white/10;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-black text-white font-body antialiased;
+    background-color: #000000 !important;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display;
+  }
+
+  ::selection {
+    background: rgba(124, 199, 255, 0.35);
+    color: #ffffff;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply border border-white/10 bg-white/5 backdrop-blur-xl shadow-soft;
+  }
+
+  .section {
+    @apply relative py-16 md:py-20;
+  }
+
+  .section-inner {
+    @apply mx-auto w-full max-w-6xl px-6;
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-slate-200;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-300;
+  }
+
+  .btn-primary {
+    @apply btn bg-brand text-black shadow-glow hover:-translate-y-0.5 hover:shadow-[0_20px_60px_rgba(201,161,74,0.45)];
+  }
+
+  .btn-ghost {
+    @apply btn border border-white/15 bg-white/5 text-white hover:border-brand/50 hover:bg-white/10;
+  }
+
+  .input {
+    @apply w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-400 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30;
+  }
+
+  .chip {
+    @apply rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.22em] text-slate-300;
+  }
+
+  .card {
+    @apply rounded-[28px] border border-white/10 bg-white/5;
+  }
+
+  .luxury-heading {
+    @apply font-luxury text-gold;
+  }
+}
