@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Button from "./Button.jsx";
 import SectionHeader from "./SectionHeader.jsx";
 import { FadeIn, Stagger, fadeItem } from "./Motion.jsx";
-import { founderProfile } from "../data/founder.js";
+import { useData } from "../context/DataContext.jsx";
 
 function PhoneIcon() {
   return (
@@ -59,6 +59,7 @@ function InstagramIcon() {
 }
 
 export default function Portfolio() {
+  const { founder: founderProfile } = useData();
   const {
     name,
     role,

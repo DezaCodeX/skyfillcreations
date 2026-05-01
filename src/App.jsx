@@ -10,6 +10,7 @@ import ServicesPage from "./pages/ServicesPage.jsx";
 import WorkGalleryPage from "./pages/WorkGalleryPage.jsx";
 import PortfolioPage from "./pages/PortfolioPage.jsx";
 import ContactPage from "./pages/ContactPage.jsx";
+import { DataProvider } from "./context/DataContext.jsx";
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -76,16 +77,18 @@ function AnimatedRoutes() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <MotionConfig reducedMotion="user">
-        <div className="relative isolate min-h-screen bg-black text-white">
-          <Navbar />
-          <main id="main" className="relative z-10">
-            <AnimatedRoutes />
-          </main>
-          <Footer />
-        </div>
-      </MotionConfig>
-    </BrowserRouter>
+    <DataProvider>
+      <BrowserRouter>
+        <MotionConfig reducedMotion="user">
+          <div className="relative isolate min-h-screen bg-black text-white">
+            <Navbar />
+            <main id="main" className="relative z-10">
+              <AnimatedRoutes />
+            </main>
+            <Footer />
+          </div>
+        </MotionConfig>
+      </BrowserRouter>
+    </DataProvider>
   );
 }

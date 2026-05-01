@@ -2,10 +2,10 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import Button from "./Button.jsx";
 import { FadeIn } from "./Motion.jsx";
-import { media } from "../data/media.js";
-import { company } from "../data/company.js";
+import { useData } from "../context/DataContext.jsx";
 
 export default function Hero() {
+  const { media, company } = useData();
   return (
     <section id="hero" className="section pt-24 md:pt-32">
       <div className="section-inner grid items-center gap-16 lg:grid-cols-[1.05fr_0.95fr]">

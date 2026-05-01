@@ -2,7 +2,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import Button from "./Button.jsx";
-import { company } from "../data/company.js";
+import { useData } from "../context/DataContext.jsx";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -15,6 +15,7 @@ const navLinks = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const { company } = useData();
   const MotionLink = motion(Link);
 
   return (

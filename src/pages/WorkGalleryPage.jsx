@@ -1,9 +1,10 @@
 import { motion } from "framer-motion";
 import SectionHeader from "../components/SectionHeader.jsx";
 import { Stagger, fadeItem } from "../components/Motion.jsx";
-import { portfolioProjects } from "../data/portfolio.js";
+import { useData } from "../context/DataContext.jsx";
 
 export default function WorkGalleryPage() {
+  const { portfolio: portfolioProjects } = useData();
   return (
     <section className="section">
       <div className="section-inner flex flex-col gap-10">

@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { FadeIn } from "./Motion.jsx";
 import SectionHeader from "./SectionHeader.jsx";
-import { media } from "../data/media.js";
+import { useData } from "../context/DataContext.jsx";
 
 const highlights = [
   {
@@ -19,6 +19,7 @@ const highlights = [
 ];
 
 export default function About() {
+  const { media } = useData();
   return (
     <section id="about" className="section">
       <div className="section-inner grid gap-10 lg:grid-cols-[1.05fr_0.95fr]">
@@ -43,7 +44,7 @@ export default function About() {
           <div className="card overflow-hidden p-6">
             <div className="relative h-[360px] overflow-hidden rounded-[24px] border border-white/10">
               <motion.img
-                src={media.aboutImage}
+                src={media?.aboutImage}
                 alt="Skyfill team collaborating"
                 className="h-full w-full object-cover"
                 whileHover={{ scale: 1.05 }}

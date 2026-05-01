@@ -1,4 +1,6 @@
-export const media = {
+import { supabase, subscribeToTable } from "../lib/supabase";
+
+let media = {
   backgroundVideos: [
     {
       label: "Ad Shoots",
@@ -6,27 +8,8 @@ export const media = {
       poster:
         "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=1600&q=80",
     },
-    {
-      label: "Podcast",
-      src: "/videos/podcast.mp4",
-      poster:
-        "https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=1600&q=80",
-    },
-    {
-      label: "Editing",
-      src: "/videos/editing.mp4",
-      poster:
-        "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1600&q=80",
-    },
-    {
-      label: "Business Development",
-      src: "/videos/business-development.mp4",
-      poster:
-        "https://images.unsplash.com/photo-1485217988980-11786ced9454?auto=format&fit=crop&w=1600&q=80",
-    },
   ],
-  heroVideo:
-    "/videos/podcast.mp4",
+  heroVideo: "/videos/podcast.mp4",
   heroPoster:
     "https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=1600&q=80",
   aboutImage:
@@ -36,3 +19,48 @@ export const media = {
   contactImage:
     "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1400&q=80",
 };
+
+// Fetch media data from Supabase
+export const fetchMediaData = async () => {
+  try {
+    const { data, error } = await supabase
+      .from("media")
+      .select("*")
+      .single();
+
+    if (error) throw error;
+
+    if (data) {
+      media = {
+        backgroundVideos: data.background_videos || [],
+        heroVideo: data.hero_video,
+        heroPoster: data.hero_poster,
+        aboutImage: data.about_image,
+        testimonialImage: data.testimonial_image,
+        contactImage: data.contact_image,
+      };
+    }
+  } catch (error) {
+    console.error("Error fetching media data:", error);
+  }
+  return media;
+};
+
+// Subscribe to real-time updates
+export const subscribeToMediaUpdates = (callback) => {
+  return subscribeToTable("media", (payload) => {
+    if (payload.eventType === "UPDATE" && payload.new) {
+      media = {
+        backgroundVideos: payload.new.background_videos || [],
+        heroVideo: payload.new.hero_video,
+        heroPoster: payload.new.hero_poster,
+        aboutImage: payload.new.about_image,
+        testimonialImage: payload.new.testimonial_image,
+        contactImage: payload.new.contact_image,
+      };
+      callback(media);
+    }
+  });
+};
+
+export { media };

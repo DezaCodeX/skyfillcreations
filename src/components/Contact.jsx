@@ -3,7 +3,7 @@ import { useState } from "react";
 import Button from "./Button.jsx";
 import { FadeIn } from "./Motion.jsx";
 import SectionHeader from "./SectionHeader.jsx";
-import { company } from "../data/company.js";
+import { useData } from "../context/DataContext.jsx";
 
 function PhoneIcon() {
   return (
@@ -52,6 +52,7 @@ function InstagramIcon() {
 
 export default function Contact() {
   const [submitMessage, setSubmitMessage] = useState("");
+  const { company } = useData();
 
   const handleSubmit = (event) => {
     event.preventDefault();

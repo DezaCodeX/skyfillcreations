@@ -16,9 +16,9 @@ module.exports = {
         muted: "rgb(var(--muted))",
       },
       fontFamily: {
-        display: ["Times New Roman", "serif"],
-        body: ["Times New Roman", "serif"],
-        luxury: ["Times New Roman", "serif"],
+        display: ["Inter", "system-ui", "-apple-system", "sans-serif"],
+        body: ["Inter", "system-ui", "-apple-system", "sans-serif"],
+        luxury: ["Inter", "system-ui", "-apple-system", "sans-serif"],
       },
       boxShadow: {
         glow: "0 25px 70px rgba(201, 161, 74, 0.35)",

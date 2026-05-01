@@ -1,4 +1,6 @@
-export const faqItems = [
+import { supabase, subscribeToTable } from "../lib/supabase";
+
+let faqItems = [
   {
     question: "What makes Skyfill different from a traditional agency?",
     answer:
@@ -20,3 +22,35 @@ export const faqItems = [
       "Every engagement includes strategy, creative direction, a content system, and performance optimization tailored to your goals.",
   },
 ];
+
+// Fetch FAQ data from Supabase
+export const fetchFaqData = async () => {
+  try {
+    const { data, error } = await supabase
+      .from("faq_items")
+      .select("*")
+      .order("id", { ascending: true });
+
+    if (error) throw error;
+
+    if (data && data.length > 0) {
+      faqItems = data.map((item) => ({
+        question: item.question,
+        answer: item.answer,
+      }));
+    }
+  } catch (error) {
+    console.error("Error fetching FAQ data:", error);
+  }
+  return faqItems;
+};
+
+// Subscribe to real-time updates
+export const subscribeToFaqUpdates = (callback) => {
+  return subscribeToTable("faq_items", (payload) => {
+    callback(payload);
+    fetchFaqData().then(callback);
+  });
+};
+
+export { faqItems };

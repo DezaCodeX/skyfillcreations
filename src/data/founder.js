@@ -1,4 +1,6 @@
-export const founderProfile = {
+import { supabase, subscribeToTable } from "../lib/supabase";
+
+let founderProfile = {
   name: "PG Gireesh",
   role: "Founder, Studio Skyfill Creations",
   about:
@@ -31,3 +33,62 @@ export const founderProfile = {
     instagramId: "gireesh__pg",
   },
 };
+
+// Fetch founder data from Supabase
+export const fetchFounderData = async () => {
+  try {
+    const { data, error } = await supabase
+      .from("founder_profile")
+      .select("*")
+      .single();
+
+    if (error) throw error;
+
+    if (data) {
+      founderProfile = {
+        name: data.name,
+        role: data.role,
+        about: data.about,
+        profileImage: data.profile_image,
+        profileImageFit: data.profile_image_fit || "contain",
+        qualities: data.qualities || [],
+        workImages: data.work_images || [],
+        contact: {
+          phone: data.contact_phone,
+          phone2: data.contact_phone2,
+          email: data.contact_email,
+          instagramId: data.contact_instagram_id,
+        },
+      };
+    }
+  } catch (error) {
+    console.error("Error fetching founder data:", error);
+  }
+  return founderProfile;
+};
+
+// Subscribe to real-time updates
+export const subscribeToFounderUpdates = (callback) => {
+  return subscribeToTable("founder_profile", (payload) => {
+    if (payload.eventType === "UPDATE" && payload.new) {
+      founderProfile = {
+        name: payload.new.name,
+        role: payload.new.role,
+        about: payload.new.about,
+        profileImage: payload.new.profile_image,
+        profileImageFit: payload.new.profile_image_fit || "contain",
+        qualities: payload.new.qualities || [],
+        workImages: payload.new.work_images || [],
+        contact: {
+          phone: payload.new.contact_phone,
+          phone2: payload.new.contact_phone2,
+          email: payload.new.contact_email,
+          instagramId: payload.new.contact_instagram_id,
+        },
+      };
+      callback(founderProfile);
+    }
+  });
+};
+
+export { founderProfile };
