@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 import { AnimatePresence, MotionConfig } from "framer-motion";
 import { useEffect } from "react";
 import Navbar from "./components/Navbar.jsx";
@@ -86,6 +87,7 @@ export default function App() {
               <AnimatedRoutes />
             </main>
             <Footer />
+            <Analytics />
           </div>
         </MotionConfig>
       </BrowserRouter>
