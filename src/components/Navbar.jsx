@@ -37,9 +37,6 @@ export default function Navbar() {
               }}
             />
             <span className="leading-none text-white">
-              <span className="block text-[10px] uppercase tracking-[0.3em] text-slate-300">
-                {company.brand?.line1 || "Studio"}
-              </span>
               <span className="block text-lg font-semibold tracking-tight">
                 {company.brand?.line2 || company.shortName}
               </span>

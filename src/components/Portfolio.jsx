@@ -83,7 +83,7 @@ export default function Portfolio() {
           <SectionHeader
             eyebrow="Founder Profile"
             title="About the Founder"
-            subtitle="Explore the vision behind Studio Skyfill Creations-featuring the founder's journey, creative approach, signature work, and direct ways to collaborate."
+            subtitle="Explore the vision behind Skyfill Creations-featuring the founder's journey, creative approach, signature work, and direct ways to collaborate."
           />
         </div>
 
