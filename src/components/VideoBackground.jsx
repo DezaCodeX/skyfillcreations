@@ -6,13 +6,14 @@ import {
   useScroll,
   useTransform,
 } from "framer-motion";
-import { media } from "../data/media.js";
+import { useData } from "../context/DataContext.jsx";
 
 const SWITCH_INTERVAL = 10000;
 const ENABLE_DELAY = 900;
 const SCROLL_STOP_DELAY = 140;
 
 export default function VideoBackground() {
+  const { media } = useData();
   const prefersReducedMotion = useReducedMotion();
   const { scrollYProgress } = useScroll();
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "18%"]);

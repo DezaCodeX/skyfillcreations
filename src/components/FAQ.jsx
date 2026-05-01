@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import SectionHeader from "./SectionHeader.jsx";
-import { faqItems } from "../data/faq.js";
+import { useData } from "../context/DataContext.jsx";
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState(0);
+  const { faqItems } = useData();
 
   return (
     <section id="faq" className="section">
@@ -20,7 +21,7 @@ export default function FAQ() {
           </div>
         </div>
         <div className="flex flex-col gap-4">
-          {faqItems.map((item, index) => {
+          {faqItems && faqItems.length > 0 ? faqItems.map((item, index) => {
             const isOpen = openIndex === index;
             return (
               <motion.div
@@ -53,7 +54,7 @@ export default function FAQ() {
                 </AnimatePresence>
               </motion.div>
             );
-          })}
+          }) : null}
         </div>
       </div>
     </section>

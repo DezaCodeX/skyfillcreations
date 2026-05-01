@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
 import SectionHeader from "./SectionHeader.jsx";
 import { Stagger, fadeItem } from "./Motion.jsx";
-import { testimonials } from "../data/testimonials.js";
-import { media } from "../data/media.js";
+import { useData } from "../context/DataContext.jsx";
 
 export default function Testimonials() {
+  const { testimonials, media } = useData();
   return (
     <section id="testimonials" className="section">
       <div className="section-inner flex flex-col gap-10">
@@ -32,7 +32,7 @@ export default function Testimonials() {
             </p>
             <div className="mt-auto flex items-center gap-4">
               <motion.img
-                src={media.testimonialImage}
+                src={media?.testimonialImage}
                 alt="Client portrait"
                 className="h-12 w-12 rounded-full object-cover"
                 whileHover={{ scale: 1.08 }}
@@ -47,7 +47,7 @@ export default function Testimonials() {
           </motion.div>
           <div className="card overflow-hidden p-6">
             <motion.img
-              src={media.contactImage}
+              src={media?.contactImage}
               alt="Skyfill client teams"
               className="h-full w-full rounded-[20px] object-cover"
               whileHover={{ scale: 1.04 }}
@@ -57,19 +57,19 @@ export default function Testimonials() {
           </div>
         </div>
         <Stagger className="grid gap-6 md:grid-cols-3">
-          {testimonials.map((testimonial) => (
+          {testimonials && testimonials.length > 0 ? testimonials.map((testimonial) => (
             <motion.div
               key={testimonial.name}
               variants={fadeItem}
               className="glass flex h-full flex-col gap-6 rounded-[28px] p-6"
             >
-              <p className="text-sm text-slate-200">“{testimonial.quote}”</p>
+              <p className="text-sm text-slate-200">"{testimonial.quote}"</p>
               <div>
                 <p className="text-sm font-semibold">{testimonial.name}</p>
                 <p className="text-xs text-slate-400">{testimonial.title}</p>
               </div>
             </motion.div>
-          ))}
+          )) : null}
         </Stagger>
       </div>
     </section>

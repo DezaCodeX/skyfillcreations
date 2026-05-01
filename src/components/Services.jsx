@@ -1,9 +1,11 @@
 import { motion } from "framer-motion";
 import SectionHeader from "./SectionHeader.jsx";
 import { Stagger, fadeItem } from "./Motion.jsx";
-import { services } from "../data/services.js";
+import { useData } from "../context/DataContext.jsx";
 
 export default function Services() {
+  const { services } = useData();
+
   return (
     <section id="services" className="section">
       <div className="section-inner flex flex-col gap-10">
@@ -17,7 +19,7 @@ export default function Services() {
           <span className="md:hidden">Swipe</span>
         </div>
         <Stagger className="flex snap-x snap-mandatory gap-6 overflow-x-auto pb-4 md:grid md:snap-none md:grid-cols-2 md:gap-6 md:overflow-visible lg:grid-cols-3">
-          {services.map((service, index) => (
+          {services && services.length > 0 ? services.map((service, index) => (
             <motion.div
               key={service.title}
               className="group relative min-w-[260px] flex-1 snap-start rounded-[28px] border border-white/10 bg-white/5 p-6 transition hover:-translate-y-1 hover:border-white/20 md:min-w-0"
@@ -37,7 +39,7 @@ export default function Services() {
               </p>
               <p className="mt-6 text-xs text-slate-400">{service.focus}</p>
             </motion.div>
-          ))}
+          )) : null}
         </Stagger>
       </div>
     </section>

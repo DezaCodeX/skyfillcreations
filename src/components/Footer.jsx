@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { company } from "../data/company.js";
+import { useData } from "../context/DataContext.jsx";
 
 export default function Footer() {
+  const { company } = useData();
   const MotionLink = motion(Link);
   return (
     <footer className="relative z-10 border-t border-white/10 py-10">
