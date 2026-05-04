@@ -7,6 +7,7 @@ import { testimonials as defaultTestimonials, fetchTestimonialsData, subscribeTo
 import { founderProfile as defaultFounder, fetchFounderData, subscribeToFounderUpdates } from "../data/founder";
 import { founderWorkImages as defaultFounderWorkImages, fetchFounderWorkImagesData, subscribeToFounderWorkImagesUpdates } from "../data/founderWorkImages";
 import { media as defaultMedia, fetchMediaData, subscribeToMediaUpdates } from "../data/media";
+import { packages as defaultPackages, fetchPackagesData, subscribeToPackagesUpdates } from "../data/packages";
 
 const DataContext = createContext();
 
@@ -27,6 +28,7 @@ export const DataProvider = ({ children }) => {
   const [founder, setFounder] = useState(defaultFounder);
   const [founderWorkImages, setFounderWorkImages] = useState(defaultFounderWorkImages);
   const [media, setMedia] = useState(defaultMedia);
+  const [packages, setPackages] = useState(defaultPackages);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -48,6 +50,11 @@ export const DataProvider = ({ children }) => {
           }
         }),
         fetchMediaData().then(setMedia),
+        fetchPackagesData().then((data) => {
+          if (Array.isArray(data)) {
+            setPackages(data);
+          }
+        }),
       ];
 
       const results = await Promise.allSettled(tasks);
@@ -116,6 +123,14 @@ export const DataProvider = ({ children }) => {
           setMedia(data);
         })
       );
+
+      subscriptions.push(
+        subscribeToPackagesUpdates((data) => {
+          if (Array.isArray(data)) {
+            setPackages(data);
+          }
+        })
+      );
     } catch (error) {
       console.error("Error subscribing to realtime updates:", error);
     }
@@ -136,6 +151,7 @@ export const DataProvider = ({ children }) => {
     founder,
     founderWorkImages,
     media,
+    packages,
     loading,
   };
 

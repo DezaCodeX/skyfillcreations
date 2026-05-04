@@ -54,6 +54,50 @@ INSERT INTO services (title, description, focus) VALUES
 ('Marketing Packages', 'Modular retainers that scale content, media, and optimization.', 'Launch + growth')
 ON CONFLICT DO NOTHING;
 
+-- Create Packages Table
+CREATE TABLE IF NOT EXISTS packages (
+  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  name TEXT NOT NULL,
+  description TEXT,
+  services_offered TEXT[] DEFAULT ARRAY[]::TEXT[],
+  sort_order INTEGER DEFAULT 0,
+  is_active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Insert Packages Data
+INSERT INTO packages (name, description, services_offered, sort_order)
+SELECT seed.name, seed.description, seed.services_offered, seed.sort_order
+FROM (
+  VALUES
+    (
+      'Signature Brand Build',
+      'A focused identity package for businesses that need a sharper premium presence.',
+      ARRAY['Branding', 'Design', 'Brand Storytelling']::TEXT[],
+      1
+    ),
+    (
+      'Content Engine Studio',
+      'A production package for consistent social, campaign, and multimedia content.',
+      ARRAY['Photography', 'Content Creation', 'Video Editing', 'Podcasts']::TEXT[],
+      2
+    ),
+    (
+      'Market Clarity Lab',
+      'An analysis package for understanding performance, competitors, and growth gaps.',
+      ARRAY['Business Analysis', 'Competitor Analysis', 'Performance Tracking']::TEXT[],
+      3
+    ),
+    (
+      'Launch Growth System',
+      'A complete execution package for brands preparing to launch, scale, or relaunch.',
+      ARRAY['Marketing Packages', 'Ad Shoot Direction', 'Campaign Content', 'Design', 'Growth Marketing']::TEXT[],
+      4
+    )
+) AS seed(name, description, services_offered, sort_order)
+WHERE NOT EXISTS (SELECT 1 FROM packages);
+
 -- Create Testimonials Table
 CREATE TABLE IF NOT EXISTS testimonials (
   id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -297,6 +341,7 @@ BEGIN
     'company',
     'faq_items',
     'services',
+    'packages',
     'testimonials',
     'portfolio_projects',
     'founder_profile',

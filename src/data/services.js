@@ -50,6 +50,22 @@ let services = [
       "Modular retainers that scale content, media, and optimization.",
     focus: "Launch + growth",
   },
+  {
+    id: 8,
+    title: "Content Creation",
+    description:
+      "We craft high-quality, engaging content that connects your brand with your audience.",
+    focus:
+      "Social Media Content, Website & Blog Writing, Brand Storytelling, Ad Copy & Campaign Content, SEO-Optimized Content",
+  },
+  {
+    id: 9,
+    title: "Video Editing",
+    description:
+      "We transform raw footage into compelling visual stories that capture attention and drive engagement.",
+    focus:
+      "Promotional & Marketing Videos, Social Media Reels & Shorts, Corporate & Brand Videos, YouTube Video Editing",
+  },
 ];
 
 // Fetch services data from Supabase
