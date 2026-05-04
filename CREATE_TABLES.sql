@@ -54,6 +54,50 @@ INSERT INTO services (title, description, focus) VALUES
 ('Marketing Packages', 'Modular retainers that scale content, media, and optimization.', 'Launch + growth')
 ON CONFLICT DO NOTHING;
 
+-- Create Packages Table
+CREATE TABLE IF NOT EXISTS packages (
+  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  name TEXT NOT NULL,
+  description TEXT,
+  services_offered TEXT[] DEFAULT ARRAY[]::TEXT[],
+  sort_order INTEGER DEFAULT 0,
+  is_active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Insert Packages Data
+INSERT INTO packages (name, description, services_offered, sort_order)
+SELECT seed.name, seed.description, seed.services_offered, seed.sort_order
+FROM (
+  VALUES
+    (
+      'Signature Brand Build',
+      'A focused identity package for businesses that need a sharper premium presence.',
+      ARRAY['Branding', 'Design', 'Brand Storytelling']::TEXT[],
+      1
+    ),
+    (
+      'Content Engine Studio',
+      'A production package for consistent social, campaign, and multimedia content.',
+      ARRAY['Photography', 'Content Creation', 'Video Editing', 'Podcasts']::TEXT[],
+      2
+    ),
+    (
+      'Market Clarity Lab',
+      'An analysis package for understanding performance, competitors, and growth gaps.',
+      ARRAY['Business Analysis', 'Competitor Analysis', 'Performance Tracking']::TEXT[],
+      3
+    ),
+    (
+      'Launch Growth System',
+      'A complete execution package for brands preparing to launch, scale, or relaunch.',
+      ARRAY['Marketing Packages', 'Ad Shoot Direction', 'Campaign Content', 'Design', 'Growth Marketing']::TEXT[],
+      4
+    )
+) AS seed(name, description, services_offered, sort_order)
+WHERE NOT EXISTS (SELECT 1 FROM packages);
+
 -- Create Testimonials Table
 CREATE TABLE IF NOT EXISTS testimonials (
   id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -98,38 +142,153 @@ ON CONFLICT DO NOTHING;
 
 -- Create Founder Profile Table
 CREATE TABLE IF NOT EXISTS founder_profile (
-  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  id BIGINT PRIMARY KEY DEFAULT 1 CHECK (id = 1),
+  eyebrow TEXT DEFAULT 'Founder Profile',
+  title TEXT DEFAULT 'About the Founder',
+  subtitle TEXT DEFAULT 'Explore the vision behind Skyfill Creations-featuring the founder''s journey, creative approach, signature work, and direct ways to collaborate.',
+  badge_label TEXT DEFAULT 'Founder',
   name TEXT DEFAULT 'PG Gireesh',
   role TEXT DEFAULT 'Founder, Studio Skyfill Creations',
   about TEXT DEFAULT 'PG Gireesh the founder of Studio Skyfill Creations, focused on building premium brands with clarity and purpose. His work blends design, storytelling, and strategy to create impactful digital experiences. From branding and photography to business and competitor analysis, he helps businesses stand out, scale smarter, and communicate with confidence across every touchpoint. Driven by precision and creativity, his vision is to craft modern brands that feel effortless, perform consistently, and leave a lasting impression.',
   profile_image TEXT DEFAULT '/Founder details/pg-gireesh.jpeg',
   profile_image_fit TEXT DEFAULT 'contain',
+  profile_image_label TEXT DEFAULT 'Founder Image',
   qualities TEXT[] DEFAULT ARRAY['Creative Direction', 'Brand Strategy', 'Growth Marketing', 'Client Partnership', 'Production Excellence', 'Execution Speed', 'Data-Driven Decisions', 'Team Leadership', 'Long-Term Vision', 'Detail Focus']::TEXT[],
+  qualities_title TEXT DEFAULT 'Qualities of PG Gireesh',
   work_images TEXT[] DEFAULT ARRAY['/Founder details/work gallery 1.jpeg', '/Founder details/work galery 2.jpeg', '/Founder details/work gallery 3.png', '/Founder details/work gallery 4.png', '/Founder details/work gallery 5.png']::TEXT[],
+  work_images_title TEXT DEFAULT 'Work Images',
+  primary_cta_label TEXT DEFAULT 'Talk to Founder',
+  primary_cta_path TEXT DEFAULT '/contact',
+  secondary_cta_label TEXT DEFAULT 'View Services',
+  secondary_cta_path TEXT DEFAULT '/services',
   contact_phone TEXT DEFAULT '+91 9345370090',
   contact_phone2 TEXT DEFAULT '+91 95001 25369',
   contact_email TEXT DEFAULT 'skyfillcreationspg@gmail.com',
   contact_instagram_id TEXT DEFAULT 'gireesh__pg',
+  contact_instagram_url TEXT DEFAULT 'https://www.instagram.com/gireesh__pg?igsh=bnp1c25qbnhma2U4',
+  contact_mobile_label TEXT DEFAULT 'Mobile',
+  contact_mail_label TEXT DEFAULT 'Mail',
+  contact_instagram_label TEXT DEFAULT 'Instagram',
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
 );
 
+-- Upgrade existing Founder Profile tables without dropping data
+ALTER TABLE founder_profile ADD COLUMN IF NOT EXISTS eyebrow TEXT DEFAULT 'Founder Profile';
+ALTER TABLE founder_profile ADD COLUMN IF NOT EXISTS title TEXT DEFAULT 'About the Founder';
+ALTER TABLE founder_profile ADD COLUMN IF NOT EXISTS subtitle TEXT DEFAULT 'Explore the vision behind Skyfill Creations-featuring the founder''s journey, creative approach, signature work, and direct ways to collaborate.';
+ALTER TABLE founder_profile ADD COLUMN IF NOT EXISTS badge_label TEXT DEFAULT 'Founder';
+ALTER TABLE founder_profile ADD COLUMN IF NOT EXISTS profile_image_label TEXT DEFAULT 'Founder Image';
+ALTER TABLE founder_profile ADD COLUMN IF NOT EXISTS qualities_title TEXT DEFAULT 'Qualities of PG Gireesh';
+ALTER TABLE founder_profile ADD COLUMN IF NOT EXISTS work_images_title TEXT DEFAULT 'Work Images';
+ALTER TABLE founder_profile ADD COLUMN IF NOT EXISTS primary_cta_label TEXT DEFAULT 'Talk to Founder';
+ALTER TABLE founder_profile ADD COLUMN IF NOT EXISTS primary_cta_path TEXT DEFAULT '/contact';
+ALTER TABLE founder_profile ADD COLUMN IF NOT EXISTS secondary_cta_label TEXT DEFAULT 'View Services';
+ALTER TABLE founder_profile ADD COLUMN IF NOT EXISTS secondary_cta_path TEXT DEFAULT '/services';
+ALTER TABLE founder_profile ADD COLUMN IF NOT EXISTS contact_instagram_url TEXT DEFAULT 'https://www.instagram.com/gireesh__pg?igsh=bnp1c25qbnhma2U4';
+ALTER TABLE founder_profile ADD COLUMN IF NOT EXISTS contact_mobile_label TEXT DEFAULT 'Mobile';
+ALTER TABLE founder_profile ADD COLUMN IF NOT EXISTS contact_mail_label TEXT DEFAULT 'Mail';
+ALTER TABLE founder_profile ADD COLUMN IF NOT EXISTS contact_instagram_label TEXT DEFAULT 'Instagram';
+
 -- Insert Founder Data
-INSERT INTO founder_profile (name, role, about, profile_image, profile_image_fit, qualities, work_images, contact_phone, contact_phone2, contact_email, contact_instagram_id) 
-VALUES (
+INSERT INTO founder_profile (
+  eyebrow,
+  title,
+  subtitle,
+  badge_label,
+  name,
+  role,
+  about,
+  profile_image,
+  profile_image_fit,
+  profile_image_label,
+  qualities,
+  qualities_title,
+  work_images,
+  work_images_title,
+  primary_cta_label,
+  primary_cta_path,
+  secondary_cta_label,
+  secondary_cta_path,
+  contact_phone,
+  contact_phone2,
+  contact_email,
+  contact_instagram_id,
+  contact_instagram_url,
+  contact_mobile_label,
+  contact_mail_label,
+  contact_instagram_label
+)
+SELECT
+  'Founder Profile',
+  'About the Founder',
+  'Explore the vision behind Skyfill Creations-featuring the founder''s journey, creative approach, signature work, and direct ways to collaborate.',
+  'Founder',
   'PG Gireesh',
   'Founder, Studio Skyfill Creations',
   'PG Gireesh the founder of Studio Skyfill Creations, focused on building premium brands with clarity and purpose. His work blends design, storytelling, and strategy to create impactful digital experiences. From branding and photography to business and competitor analysis, he helps businesses stand out, scale smarter, and communicate with confidence across every touchpoint. Driven by precision and creativity, his vision is to craft modern brands that feel effortless, perform consistently, and leave a lasting impression.',
   '/Founder details/pg-gireesh.jpeg',
   'contain',
+  'Founder Image',
   ARRAY['Creative Direction', 'Brand Strategy', 'Growth Marketing', 'Client Partnership', 'Production Excellence', 'Execution Speed', 'Data-Driven Decisions', 'Team Leadership', 'Long-Term Vision', 'Detail Focus']::TEXT[],
+  'Qualities of PG Gireesh',
   ARRAY['/Founder details/work gallery 1.jpeg', '/Founder details/work galery 2.jpeg', '/Founder details/work gallery 3.png', '/Founder details/work gallery 4.png', '/Founder details/work gallery 5.png']::TEXT[],
+  'Work Images',
+  'Talk to Founder',
+  '/contact',
+  'View Services',
+  '/services',
   '+91 9345370090',
   '+91 95001 25369',
   'skyfillcreationspg@gmail.com',
-  'gireesh__pg'
-)
-ON CONFLICT DO NOTHING;
+  'gireesh__pg',
+  'https://www.instagram.com/gireesh__pg?igsh=bnp1c25qbnhma2U4',
+  'Mobile',
+  'Mail',
+  'Instagram'
+WHERE NOT EXISTS (SELECT 1 FROM founder_profile);
+
+UPDATE founder_profile
+SET
+  eyebrow = COALESCE(eyebrow, 'Founder Profile'),
+  title = COALESCE(title, 'About the Founder'),
+  subtitle = COALESCE(subtitle, 'Explore the vision behind Skyfill Creations-featuring the founder''s journey, creative approach, signature work, and direct ways to collaborate.'),
+  badge_label = COALESCE(badge_label, 'Founder'),
+  profile_image_label = COALESCE(profile_image_label, 'Founder Image'),
+  qualities_title = COALESCE(qualities_title, 'Qualities of PG Gireesh'),
+  work_images_title = COALESCE(work_images_title, 'Work Images'),
+  primary_cta_label = COALESCE(primary_cta_label, 'Talk to Founder'),
+  primary_cta_path = COALESCE(primary_cta_path, '/contact'),
+  secondary_cta_label = COALESCE(secondary_cta_label, 'View Services'),
+  secondary_cta_path = COALESCE(secondary_cta_path, '/services'),
+  contact_instagram_url = COALESCE(contact_instagram_url, 'https://www.instagram.com/gireesh__pg?igsh=bnp1c25qbnhma2U4'),
+  contact_mobile_label = COALESCE(contact_mobile_label, 'Mobile'),
+  contact_mail_label = COALESCE(contact_mail_label, 'Mail'),
+  contact_instagram_label = COALESCE(contact_instagram_label, 'Instagram');
+
+-- Create Founder Work Images Table
+CREATE TABLE IF NOT EXISTS founder_work_images (
+  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  image_url TEXT NOT NULL,
+  alt_text TEXT,
+  sort_order INTEGER DEFAULT 0,
+  is_active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Insert Founder Work Images
+INSERT INTO founder_work_images (image_url, alt_text, sort_order)
+SELECT seed.image_url, seed.alt_text, seed.sort_order
+FROM (
+  VALUES
+    ('/Founder details/work gallery 1.jpeg', 'Work sample 1', 1),
+    ('/Founder details/work galery 2.jpeg', 'Work sample 2', 2),
+    ('/Founder details/work gallery 3.png', 'Work sample 3', 3),
+    ('/Founder details/work gallery 4.png', 'Work sample 4', 4),
+    ('/Founder details/work gallery 5.png', 'Work sample 5', 5)
+) AS seed(image_url, alt_text, sort_order)
+WHERE NOT EXISTS (SELECT 1 FROM founder_work_images);
 
 -- Create Media Table
 CREATE TABLE IF NOT EXISTS media (
@@ -174,10 +333,30 @@ VALUES (
 ON CONFLICT DO NOTHING;
 
 -- Enable Real-time for all tables
-ALTER PUBLICATION supabase_realtime ADD TABLE company;
-ALTER PUBLICATION supabase_realtime ADD TABLE faq_items;
-ALTER PUBLICATION supabase_realtime ADD TABLE services;
-ALTER PUBLICATION supabase_realtime ADD TABLE testimonials;
-ALTER PUBLICATION supabase_realtime ADD TABLE portfolio_projects;
-ALTER PUBLICATION supabase_realtime ADD TABLE founder_profile;
-ALTER PUBLICATION supabase_realtime ADD TABLE media;
+DO $$
+DECLARE
+  table_name TEXT;
+BEGIN
+  FOREACH table_name IN ARRAY ARRAY[
+    'company',
+    'faq_items',
+    'services',
+    'packages',
+    'testimonials',
+    'portfolio_projects',
+    'founder_profile',
+    'founder_work_images',
+    'media'
+  ]
+  LOOP
+    IF NOT EXISTS (
+      SELECT 1
+      FROM pg_publication_tables
+      WHERE pubname = 'supabase_realtime'
+        AND schemaname = 'public'
+        AND tablename = table_name
+    ) THEN
+      EXECUTE format('ALTER PUBLICATION supabase_realtime ADD TABLE %I', table_name);
+    END IF;
+  END LOOP;
+END $$;

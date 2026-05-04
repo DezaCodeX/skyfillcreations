@@ -1,9 +1,23 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import emailjs from "emailjs-com";
 import Button from "./Button.jsx";
 import { FadeIn } from "./Motion.jsx";
 import SectionHeader from "./SectionHeader.jsx";
 import { useData } from "../context/DataContext.jsx";
+import { supabase } from "../lib/supabase.js";
+
+// Toast Component
+function Toast({ message, type }) {
+  const bgColor = type === "success" ? "bg-green-600" : "bg-red-600";
+  return (
+    <div
+      className={`${bgColor} fixed bottom-6 right-6 rounded-lg px-6 py-3 text-white shadow-lg animate-pulse z-50`}
+    >
+      {message}
+    </div>
+  );
+}
 
 function PhoneIcon() {
   return (
@@ -51,34 +65,82 @@ function InstagramIcon() {
 }
 
 export default function Contact() {
-  const [submitMessage, setSubmitMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState(null);
   const { company } = useData();
 
-  const handleSubmit = (event) => {
+  const showToast = (message, type = "success") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 4000);
+  };
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
 
-    const formData = new FormData(event.currentTarget);
-    const name = (formData.get("name") || "").toString().trim();
-    const email = (formData.get("email") || "").toString().trim();
-    const companyName = (formData.get("company") || "").toString().trim();
-    const message = (formData.get("message") || "").toString().trim();
+    try {
+      const form = event.currentTarget;
+      const fullName = form.full_name.value.trim();
+      const email = form.email.value.trim();
+      const phone = form.phone.value.trim();
+      const company_name = form.company.value.trim();
+      const message = form.message.value.trim();
 
-    const subject = `New inquiry from ${name || "Website visitor"}`;
-    const body = [
-      `Name: ${name || "N/A"}`,
-      `Email: ${email || "N/A"}`,
-      `Company: ${companyName || "N/A"}`,
-      "",
-      "Project Summary:",
-      message || "N/A",
-    ].join("\n");
+      const formData = {
+        full_name: fullName,
+        email: email,
+        phone: phone,
+        company: company_name,
+        message: message,
+        time: new Date().toLocaleString(),
+      };
 
-    const mailto = `mailto:${company.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailto;
+      // 1. Save to Supabase
+      const { error: supabaseError } = await supabase
+        .from("enquiries")
+        .insert([
+          {
+            full_name: fullName,
+            email: email,
+            phone: phone,
+            company: company_name,
+            message: message,
+          },
+        ]);
 
-    setSubmitMessage(
-      `Your email app has been opened. Send the draft to complete your inquiry to ${company.email}.`
-    );
+      if (supabaseError) {
+        console.error("Supabase Error:", supabaseError);
+        throw new Error(`Database error: ${supabaseError.message}`);
+      }
+
+      // 2. Send Email via EmailJS
+      try {
+        await emailjs.send(
+          import.meta.env.VITE_EMAILJS_SERVICE_ID,
+          import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+          formData,
+          import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+        );
+      } catch (emailError) {
+        console.error("Email sending failed:", emailError);
+        // Don't fail the whole process if email fails
+      }
+
+      // 3. Show success and reset form
+      showToast(
+        "✅ Inquiry submitted successfully! We'll respond within 48 hours.",
+        "success"
+      );
+      form.reset();
+    } catch (err) {
+      console.error("Error submitting inquiry:", err);
+      showToast(
+        "❌ Something went wrong. Please try again or contact us directly.",
+        "error"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -138,10 +200,11 @@ export default function Contact() {
                 Full Name
                 <input
                   type="text"
-                  name="name"
+                  name="full_name"
                   className="input mt-2"
                   placeholder="Avery Johnson"
                   required
+                  disabled={loading}
                 />
               </label>
               <label className="text-xs uppercase tracking-[0.2em] text-slate-400">
@@ -152,18 +215,33 @@ export default function Contact() {
                   className="input mt-2"
                   placeholder="hello@brand.com"
                   required
+                  disabled={loading}
                 />
               </label>
             </div>
-            <label className="text-xs uppercase tracking-[0.2em] text-slate-400">
-              Company
-              <input
-                type="text"
-                name="company"
-                className="input mt-2"
-                placeholder="Brand or venture"
-              />
-            </label>
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="text-xs uppercase tracking-[0.2em] text-slate-400">
+                Phone
+                <input
+                  type="tel"
+                  name="phone"
+                  className="input mt-2"
+                  placeholder="+1 (555) 123-4567"
+                  required
+                  disabled={loading}
+                />
+              </label>
+              <label className="text-xs uppercase tracking-[0.2em] text-slate-400">
+                Company
+                <input
+                  type="text"
+                  name="company"
+                  className="input mt-2"
+                  placeholder="Brand or venture"
+                  disabled={loading}
+                />
+              </label>
+            </div>
             <label className="text-xs uppercase tracking-[0.2em] text-slate-400">
               Project Summary
               <textarea
@@ -172,18 +250,26 @@ export default function Contact() {
                 className="input mt-2 resize-none"
                 placeholder="Share goals, timelines, and any key challenges."
                 required
+                disabled={loading}
               />
             </label>
-            {submitMessage ? (
-              <p className="text-sm text-slate-300">{submitMessage}</p>
-            ) : null}
             <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-slate-400">
               <span>Typical engagement begins at $8K/month.</span>
-              <Button type="submit">Send Inquiry</Button>
+              <Button type="submit" disabled={loading}>
+                {loading ? (
+                  <span className="flex items-center gap-2">
+                    <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-brand border-r-transparent" />
+                    Sending...
+                  </span>
+                ) : (
+                  "Send Inquiry"
+                )}
+              </Button>
             </div>
           </form>
         </FadeIn>
       </div>
+      {toast && <Toast message={toast.message} type={toast.type} />}
     </section>
   );
 }

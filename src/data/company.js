@@ -1,4 +1,4 @@
-import { supabase, subscribeToTable } from "../lib/supabase";
+import { subscribeToTable, supabase } from "../lib/supabase";
 
 let companyData = {
   name: "Studio Skyfill Creations",
@@ -51,27 +51,9 @@ export const fetchCompanyData = async () => {
   return companyData;
 };
 
-// Subscribe to real-time updates
 export const subscribeToCompanyUpdates = (callback) => {
-  return subscribeToTable("company", (payload) => {
-    if (payload.eventType === "UPDATE" && payload.new) {
-      companyData = {
-        name: payload.new.name,
-        shortName: payload.new.short_name,
-        email: payload.new.email,
-        phone: payload.new.phone,
-        phone2: payload.new.phone2,
-        instagramId: payload.new.instagram_id,
-        instagramUrl: payload.new.instagram_url,
-        address: payload.new.address,
-        logo: payload.new.logo,
-        brand: {
-          line1: payload.new.brand_line1,
-          line2: payload.new.brand_line2,
-        },
-      };
-      callback(companyData);
-    }
+  return subscribeToTable("company", () => {
+    fetchCompanyData().then(callback);
   });
 };
 

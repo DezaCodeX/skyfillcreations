@@ -1,4 +1,4 @@
-import { supabase, subscribeToTable } from "../lib/supabase";
+import { subscribeToTable, supabase } from "../lib/supabase";
 
 let portfolioProjects = [
   {
@@ -43,10 +43,8 @@ export const fetchPortfolioData = async () => {
   return portfolioProjects;
 };
 
-// Subscribe to real-time updates
 export const subscribeToPortfolioUpdates = (callback) => {
-  return subscribeToTable("portfolio_projects", (payload) => {
-    callback(payload);
+  return subscribeToTable("portfolio_projects", () => {
     fetchPortfolioData().then(callback);
   });
 };
