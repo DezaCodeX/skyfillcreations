@@ -31,7 +31,7 @@ export default function Navbar() {
             <img
               src={company.logo}
               alt={`${company.shortName} logo`}
-              className="h-9 w-9 rounded-full object-contain"
+              className="h-9 w-9 rounded-full bg-white object-contain"
               onError={(event) => {
                 event.currentTarget.style.display = "none";
               }}
