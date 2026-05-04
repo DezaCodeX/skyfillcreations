@@ -62,17 +62,11 @@ export default function Hero() {
           className="relative"
         >
           <div className="card overflow-hidden p-6">
-            <div className="relative h-72 overflow-hidden rounded-[24px] border border-white/10 bg-black/50 md:h-96">
-              <motion.video
-                className="h-full w-full object-cover"
-                src={media.heroVideo}
-                poster={media.heroPoster}
-                autoPlay
-                loop
-                muted
-                playsInline
-                preload="metadata"
-                disablePictureInPicture
+            <div className="relative h-72 overflow-hidden rounded-[24px] border border-white/10 bg-black/50 md:h-96 flex items-center justify-center">
+              <motion.img
+                className="h-full w-full object-contain"
+                src="/logo.png"
+                alt="Skyfill Logo"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
               />
@@ -80,7 +74,7 @@ export default function Hero() {
               <div className="absolute bottom-4 left-4 flex items-center gap-3 rounded-full border border-white/10 bg-black/50 px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/80">
                 Skyfill
                 <span className="h-1.5 w-1.5 rounded-full bg-brand" />
-                Brand Film
+                Brand Logo
               </div>
             </div>
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
