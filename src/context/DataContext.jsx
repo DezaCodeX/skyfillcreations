@@ -5,6 +5,7 @@ import { portfolioProjects as defaultPortfolio, fetchPortfolioData, subscribeToP
 import { services as defaultServices, fetchServicesData, subscribeToServicesUpdates } from "../data/services";
 import { testimonials as defaultTestimonials, fetchTestimonialsData, subscribeToTestimonialsUpdates } from "../data/testimonials";
 import { founderProfile as defaultFounder, fetchFounderData, subscribeToFounderUpdates } from "../data/founder";
+import { founderWorkImages as defaultFounderWorkImages, fetchFounderWorkImagesData, subscribeToFounderWorkImagesUpdates } from "../data/founderWorkImages";
 import { media as defaultMedia, fetchMediaData, subscribeToMediaUpdates } from "../data/media";
 
 const DataContext = createContext();
@@ -24,6 +25,7 @@ export const DataProvider = ({ children }) => {
   const [services, setServices] = useState(defaultServices);
   const [testimonials, setTestimonials] = useState(defaultTestimonials);
   const [founder, setFounder] = useState(defaultFounder);
+  const [founderWorkImages, setFounderWorkImages] = useState(defaultFounderWorkImages);
   const [media, setMedia] = useState(defaultMedia);
   const [loading, setLoading] = useState(true);
 
@@ -40,6 +42,11 @@ export const DataProvider = ({ children }) => {
         }),
         fetchTestimonialsData().then(setTestimonials),
         fetchFounderData().then(setFounder),
+        fetchFounderWorkImagesData().then((data) => {
+          if (Array.isArray(data)) {
+            setFounderWorkImages(data);
+          }
+        }),
         fetchMediaData().then(setMedia),
       ];
 
@@ -97,6 +104,14 @@ export const DataProvider = ({ children }) => {
       );
 
       subscriptions.push(
+        subscribeToFounderWorkImagesUpdates((data) => {
+          if (Array.isArray(data)) {
+            setFounderWorkImages(data);
+          }
+        })
+      );
+
+      subscriptions.push(
         subscribeToMediaUpdates((data) => {
           setMedia(data);
         })
@@ -119,6 +134,7 @@ export const DataProvider = ({ children }) => {
     services,
     testimonials,
     founder,
+    founderWorkImages,
     media,
     loading,
   };

@@ -222,6 +222,30 @@ SET
   contact_mail_label = COALESCE(contact_mail_label, 'Mail'),
   contact_instagram_label = COALESCE(contact_instagram_label, 'Instagram');
 
+-- Create Founder Work Images Table
+CREATE TABLE IF NOT EXISTS founder_work_images (
+  id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+  image_url TEXT NOT NULL,
+  alt_text TEXT,
+  sort_order INTEGER DEFAULT 0,
+  is_active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Insert Founder Work Images
+INSERT INTO founder_work_images (image_url, alt_text, sort_order)
+SELECT seed.image_url, seed.alt_text, seed.sort_order
+FROM (
+  VALUES
+    ('/Founder details/work gallery 1.jpeg', 'Work sample 1', 1),
+    ('/Founder details/work galery 2.jpeg', 'Work sample 2', 2),
+    ('/Founder details/work gallery 3.png', 'Work sample 3', 3),
+    ('/Founder details/work gallery 4.png', 'Work sample 4', 4),
+    ('/Founder details/work gallery 5.png', 'Work sample 5', 5)
+) AS seed(image_url, alt_text, sort_order)
+WHERE NOT EXISTS (SELECT 1 FROM founder_work_images);
+
 -- Create Media Table
 CREATE TABLE IF NOT EXISTS media (
   id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -265,10 +289,29 @@ VALUES (
 ON CONFLICT DO NOTHING;
 
 -- Enable Real-time for all tables
-ALTER PUBLICATION supabase_realtime ADD TABLE company;
-ALTER PUBLICATION supabase_realtime ADD TABLE faq_items;
-ALTER PUBLICATION supabase_realtime ADD TABLE services;
-ALTER PUBLICATION supabase_realtime ADD TABLE testimonials;
-ALTER PUBLICATION supabase_realtime ADD TABLE portfolio_projects;
-ALTER PUBLICATION supabase_realtime ADD TABLE founder_profile;
-ALTER PUBLICATION supabase_realtime ADD TABLE media;
+DO $$
+DECLARE
+  table_name TEXT;
+BEGIN
+  FOREACH table_name IN ARRAY ARRAY[
+    'company',
+    'faq_items',
+    'services',
+    'testimonials',
+    'portfolio_projects',
+    'founder_profile',
+    'founder_work_images',
+    'media'
+  ]
+  LOOP
+    IF NOT EXISTS (
+      SELECT 1
+      FROM pg_publication_tables
+      WHERE pubname = 'supabase_realtime'
+        AND schemaname = 'public'
+        AND tablename = table_name
+    ) THEN
+      EXECUTE format('ALTER PUBLICATION supabase_realtime ADD TABLE %I', table_name);
+    END IF;
+  END LOOP;
+END $$;

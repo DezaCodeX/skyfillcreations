@@ -59,7 +59,7 @@ function InstagramIcon() {
 }
 
 export default function Portfolio() {
-  const { founder: founderProfile } = useData();
+  const { founder: founderProfile, founderWorkImages } = useData();
   const {
     eyebrow,
     title,
@@ -73,7 +73,6 @@ export default function Portfolio() {
     profileImageLabel,
     qualities,
     qualitiesTitle,
-    workImages,
     workImagesTitle,
     primaryCtaLabel,
     primaryCtaPath,
@@ -164,17 +163,17 @@ export default function Portfolio() {
         <section className="card p-8 md:p-10">
           <h3 className="text-xl font-semibold">{workImagesTitle}</h3>
           <Stagger className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {workImages.map((image, index) => (
+            {founderWorkImages.map((item, index) => (
               <motion.div
-                key={`${image}-${index}`}
+                key={item.id || `${item.image}-${index}`}
                 variants={fadeItem}
                 className="group relative flex h-44 items-center justify-center overflow-hidden rounded-2xl bg-black md:h-48"
                 whileHover={{ y: -6, scale: 1.01 }}
                 transition={{ type: "spring", stiffness: 220, damping: 20 }}
               >
                 <motion.img
-                  src={image}
-                  alt={`Work sample ${index + 1}`}
+                  src={item.image}
+                  alt={item.alt || `Work sample ${index + 1}`}
                   className="h-full w-full object-contain object-center"
                   whileHover={{ scale: 1.04 }}
                   transition={{ duration: 0.4, ease: "easeOut" }}
