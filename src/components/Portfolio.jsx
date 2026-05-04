@@ -61,13 +61,24 @@ function InstagramIcon() {
 export default function Portfolio() {
   const { founder: founderProfile } = useData();
   const {
+    eyebrow,
+    title,
+    subtitle,
+    badgeLabel,
     name,
     role,
     about,
     profileImage,
     profileImageFit,
+    profileImageLabel,
     qualities,
+    qualitiesTitle,
     workImages,
+    workImagesTitle,
+    primaryCtaLabel,
+    primaryCtaPath,
+    secondaryCtaLabel,
+    secondaryCtaPath,
     contact,
   } = founderProfile;
 
@@ -81,9 +92,9 @@ export default function Portfolio() {
       <div className="section-inner flex flex-col gap-10">
         <div className="flex flex-col gap-8">
           <SectionHeader
-            eyebrow="Founder Profile"
-            title="About the Founder"
-            subtitle="Explore the vision behind Skyfill Creations-featuring the founder's journey, creative approach, signature work, and direct ways to collaborate."
+            eyebrow={eyebrow}
+            title={title}
+            subtitle={subtitle}
           />
         </div>
 
@@ -96,7 +107,7 @@ export default function Portfolio() {
         >
           <div className="p-8 md:p-10">
             <div>
-              <span className="chip">Founder</span>
+              <span className="chip">{badgeLabel}</span>
               <h3 className="mt-5 text-2xl font-semibold md:text-3xl">{name}</h3>
               <p className="mt-2 text-sm uppercase tracking-[0.2em] text-slate-400">
                 {role}
@@ -107,11 +118,11 @@ export default function Portfolio() {
             </div>
 
             <div className="mt-8 flex flex-wrap items-center gap-4">
-              <Button as={Link} to="/contact">
-                Talk to Founder
+              <Button as={Link} to={primaryCtaPath}>
+                {primaryCtaLabel}
               </Button>
-              <Button as={Link} to="/services" variant="ghost">
-                View Services
+              <Button as={Link} to={secondaryCtaPath} variant="ghost">
+                {secondaryCtaLabel}
               </Button>
             </div>
           </div>
@@ -127,14 +138,14 @@ export default function Portfolio() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
             <div className="absolute bottom-5 left-5 rounded-full bg-black/50 px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/80">
-              Founder Image
+              {profileImageLabel}
             </div>
           </div>
         </motion.article>
 
         <FadeIn>
           <section className="card p-8 md:p-10">
-            <h3 className="text-xl font-semibold">Qualities of {name}</h3>
+            <h3 className="text-xl font-semibold">{qualitiesTitle}</h3>
             <Stagger className="mt-6 flex flex-wrap gap-3">
               {qualities.map((quality) => (
                 <motion.span
@@ -151,7 +162,7 @@ export default function Portfolio() {
         </FadeIn>
 
         <section className="card p-8 md:p-10">
-          <h3 className="text-xl font-semibold">Work Images</h3>
+          <h3 className="text-xl font-semibold">{workImagesTitle}</h3>
           <Stagger className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {workImages.map((image, index) => (
               <motion.div
@@ -180,12 +191,12 @@ export default function Portfolio() {
 
         <Stagger className="grid gap-6 md:grid-cols-3">
           {[
-            { label: "Mobile", value: contact.phone, href: `tel:${contact.phone}`, icon: PhoneIcon },
-            { label: "Mail", value: contact.email, href: `mailto:${contact.email}`, icon: MailIcon },
+            { label: contact.mobileLabel, value: contact.phone, href: `tel:${contact.phone}`, icon: PhoneIcon },
+            { label: contact.mailLabel, value: contact.email, href: `mailto:${contact.email}`, icon: MailIcon },
             {
-              label: "Instagram",
+              label: contact.instagramLabel,
               value: contact.instagramId,
-              href: "https://www.instagram.com/gireesh__pg?igsh=bnp1c25qbnhma2U4",
+              href: contact.instagramUrl,
               icon: InstagramIcon,
             },
           ].map((item) => (
