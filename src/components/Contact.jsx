@@ -82,12 +82,14 @@ export default function Contact() {
       const form = event.currentTarget;
       const fullName = form.full_name.value.trim();
       const email = form.email.value.trim();
+      const phone = form.phone.value.trim();
       const company_name = form.company.value.trim();
       const message = form.message.value.trim();
 
       const formData = {
         full_name: fullName,
         email: email,
+        phone: phone,
         company: company_name,
         message: message,
         time: new Date().toLocaleString(),
@@ -100,6 +102,7 @@ export default function Contact() {
           {
             full_name: fullName,
             email: email,
+            phone: phone,
             company: company_name,
             message: message,
           },
@@ -216,16 +219,29 @@ export default function Contact() {
                 />
               </label>
             </div>
-            <label className="text-xs uppercase tracking-[0.2em] text-slate-400">
-              Company
-              <input
-                type="text"
-                name="company"
-                className="input mt-2"
-                placeholder="Brand or venture"
-                disabled={loading}
-              />
-            </label>
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="text-xs uppercase tracking-[0.2em] text-slate-400">
+                Phone
+                <input
+                  type="tel"
+                  name="phone"
+                  className="input mt-2"
+                  placeholder="+1 (555) 123-4567"
+                  required
+                  disabled={loading}
+                />
+              </label>
+              <label className="text-xs uppercase tracking-[0.2em] text-slate-400">
+                Company
+                <input
+                  type="text"
+                  name="company"
+                  className="input mt-2"
+                  placeholder="Brand or venture"
+                  disabled={loading}
+                />
+              </label>
+            </div>
             <label className="text-xs uppercase tracking-[0.2em] text-slate-400">
               Project Summary
               <textarea
