@@ -59,7 +59,7 @@ function InstagramIcon() {
 }
 
 export default function Portfolio() {
-  const { founder: founderProfile, founderWorkImages } = useData();
+  const { company, founder: founderProfile, founderWorkImages } = useData();
   const {
     eyebrow,
     title,
@@ -80,6 +80,12 @@ export default function Portfolio() {
     secondaryCtaPath,
     contact,
   } = founderProfile;
+  const phoneNumbers = [company.phone, company.phone2]
+    .filter(Boolean)
+    .map((phone) => ({
+      href: `tel:${phone}`,
+      value: phone.startsWith("+") ? phone : `+91 ${phone}`,
+    }));
 
   const imageFitClass =
     profileImageFit === "contain"
@@ -190,12 +196,12 @@ export default function Portfolio() {
 
         <Stagger className="grid gap-6 md:grid-cols-3">
           {[
-            { label: contact.mobileLabel, value: contact.phone, href: `tel:${contact.phone}`, icon: PhoneIcon },
-            { label: contact.mailLabel, value: contact.email, href: `mailto:${contact.email}`, icon: MailIcon },
+            { label: contact.mobileLabel, values: phoneNumbers, icon: PhoneIcon },
+            { label: contact.mailLabel, value: company.email, href: `mailto:${company.email}`, icon: MailIcon },
             {
               label: contact.instagramLabel,
-              value: contact.instagramId,
-              href: contact.instagramUrl,
+              value: company.instagramId,
+              href: company.instagramUrl,
               icon: InstagramIcon,
             },
           ].map((item) => (
@@ -212,14 +218,28 @@ export default function Portfolio() {
                 </span>
                 <p className="text-xs uppercase tracking-[0.22em] text-slate-400">{item.label}</p>
               </div>
-              <a
-                href={item.href}
-                target={item.label === "Instagram" ? "_blank" : undefined}
-                rel={item.label === "Instagram" ? "noreferrer" : undefined}
-                className="mt-4 inline-flex text-base text-white transition hover:text-brand"
-              >
-                {item.value}
-              </a>
+              {item.values ? (
+                <div className="mt-4 flex flex-col gap-2">
+                  {item.values.map((value) => (
+                    <a
+                      key={value.href}
+                      href={value.href}
+                      className="inline-flex text-base text-white transition hover:text-brand"
+                    >
+                      {value.value}
+                    </a>
+                  ))}
+                </div>
+              ) : (
+                <a
+                  href={item.href}
+                  target={item.label === "Instagram" ? "_blank" : undefined}
+                  rel={item.label === "Instagram" ? "noreferrer" : undefined}
+                  className="mt-4 inline-flex text-base text-white transition hover:text-brand"
+                >
+                  {item.value}
+                </a>
+              )}
             </motion.article>
           ))}
         </Stagger>
