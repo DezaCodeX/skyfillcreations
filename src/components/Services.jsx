@@ -1,10 +1,62 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import SectionHeader from "./SectionHeader.jsx";
 import { Stagger, fadeItem } from "./Motion.jsx";
 import { useData } from "../context/DataContext.jsx";
+import { fetchServicesData, subscribeToServicesUpdates } from "../data/services.js";
 
 export default function Services() {
   const { services } = useData();
+  const [visibleServices, setVisibleServices] = useState(services);
+  const [loadingServices, setLoadingServices] = useState(true);
+  const [servicesError, setServicesError] = useState("");
+
+  useEffect(() => {
+    if (Array.isArray(services)) {
+      setVisibleServices(services);
+    }
+  }, [services]);
+
+  useEffect(() => {
+    let active = true;
+
+    fetchServicesData()
+      .then((data) => {
+        if (active && Array.isArray(data)) {
+          setVisibleServices(data);
+          setServicesError("");
+        }
+      })
+      .catch((error) => {
+        if (active) {
+          setServicesError(error.message || "Unable to load services.");
+        }
+      })
+      .finally(() => {
+        if (active) {
+          setLoadingServices(false);
+        }
+      });
+
+    let subscription;
+
+    try {
+      subscription = subscribeToServicesUpdates((data) => {
+        if (active && Array.isArray(data)) {
+          setVisibleServices(data);
+        }
+      });
+    } catch (error) {
+      console.error("Error subscribing to service updates:", error);
+    }
+
+    return () => {
+      active = false;
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+    };
+  }, []);
 
   return (
     <section id="services" className="section">
@@ -18,10 +70,15 @@ export default function Services() {
           <span>Platform services</span>
           <span className="md:hidden">Swipe</span>
         </div>
+        {loadingServices ? (
+          <p className="text-sm text-slate-400">Loading services...</p>
+        ) : servicesError ? (
+          <p className="text-sm text-red-300">{servicesError}</p>
+        ) : null}
         <Stagger className="flex snap-x snap-mandatory gap-6 overflow-x-auto pb-4 md:grid md:snap-none md:grid-cols-2 md:gap-6 md:overflow-visible lg:grid-cols-3">
-          {services && services.length > 0 ? services.map((service, index) => (
+          {visibleServices && visibleServices.length > 0 ? visibleServices.map((service, index) => (
             <motion.div
-              key={service.title}
+              key={service.id || service.title}
               className="group relative min-w-[260px] flex-1 snap-start rounded-[28px] border border-white/10 bg-white/5 p-6 transition hover:-translate-y-1 hover:border-white/20 md:min-w-0"
               variants={fadeItem}
               whileHover={{ y: -8 }}

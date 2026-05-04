@@ -1,4 +1,4 @@
-import { supabase, subscribeToTable } from "../lib/supabase";
+import { subscribeToTable, supabase } from "../lib/supabase";
 
 let media = {
   backgroundVideos: [
@@ -46,20 +46,9 @@ export const fetchMediaData = async () => {
   return media;
 };
 
-// Subscribe to real-time updates
 export const subscribeToMediaUpdates = (callback) => {
-  return subscribeToTable("media", (payload) => {
-    if (payload.eventType === "UPDATE" && payload.new) {
-      media = {
-        backgroundVideos: payload.new.background_videos || [],
-        heroVideo: payload.new.hero_video,
-        heroPoster: payload.new.hero_poster,
-        aboutImage: payload.new.about_image,
-        testimonialImage: payload.new.testimonial_image,
-        contactImage: payload.new.contact_image,
-      };
-      callback(media);
-    }
+  return subscribeToTable("media", () => {
+    fetchMediaData().then(callback);
   });
 };
 

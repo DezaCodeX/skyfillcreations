@@ -7,8 +7,13 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Real-time subscription helper
 export const subscribeToTable = (tableName, callback) => {
+  const channelName =
+    typeof crypto !== "undefined" && crypto.randomUUID
+      ? `public:${tableName}:${crypto.randomUUID()}`
+      : `public:${tableName}:${Date.now()}:${Math.random()}`;
+
   const channel = supabase
-    .channel(`public:${tableName}`)
+    .channel(channelName)
     .on(
       'postgres_changes',
       {
@@ -22,5 +27,9 @@ export const subscribeToTable = (tableName, callback) => {
     )
     .subscribe();
 
-  return channel;
+  return {
+    unsubscribe: () => {
+      supabase.removeChannel(channel);
+    },
+  };
 };

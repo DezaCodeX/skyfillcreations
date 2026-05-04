@@ -1,4 +1,4 @@
-import { supabase, subscribeToTable } from "../lib/supabase";
+import { subscribeToTable, supabase } from "../lib/supabase";
 
 let founderProfile = {
   name: "PG Gireesh",
@@ -67,27 +67,9 @@ export const fetchFounderData = async () => {
   return founderProfile;
 };
 
-// Subscribe to real-time updates
 export const subscribeToFounderUpdates = (callback) => {
-  return subscribeToTable("founder_profile", (payload) => {
-    if (payload.eventType === "UPDATE" && payload.new) {
-      founderProfile = {
-        name: payload.new.name,
-        role: payload.new.role,
-        about: payload.new.about,
-        profileImage: payload.new.profile_image,
-        profileImageFit: payload.new.profile_image_fit || "contain",
-        qualities: payload.new.qualities || [],
-        workImages: payload.new.work_images || [],
-        contact: {
-          phone: payload.new.contact_phone,
-          phone2: payload.new.contact_phone2,
-          email: payload.new.contact_email,
-          instagramId: payload.new.contact_instagram_id,
-        },
-      };
-      callback(founderProfile);
-    }
+  return subscribeToTable("founder_profile", () => {
+    fetchFounderData().then(callback);
   });
 };
 

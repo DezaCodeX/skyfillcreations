@@ -1,4 +1,4 @@
-import { supabase, subscribeToTable } from "../lib/supabase";
+import { subscribeToTable, supabase } from "../lib/supabase";
 
 let testimonials = [
   {
@@ -32,10 +32,8 @@ export const fetchTestimonialsData = async () => {
   return testimonials;
 };
 
-// Subscribe to real-time updates
 export const subscribeToTestimonialsUpdates = (callback) => {
-  return subscribeToTable("testimonials", (payload) => {
-    callback(payload);
+  return subscribeToTable("testimonials", () => {
     fetchTestimonialsData().then(callback);
   });
 };

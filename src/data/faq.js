@@ -1,4 +1,4 @@
-import { supabase, subscribeToTable } from "../lib/supabase";
+import { subscribeToTable, supabase } from "../lib/supabase";
 
 let faqItems = [
   {
@@ -45,10 +45,8 @@ export const fetchFaqData = async () => {
   return faqItems;
 };
 
-// Subscribe to real-time updates
 export const subscribeToFaqUpdates = (callback) => {
-  return subscribeToTable("faq_items", (payload) => {
-    callback(payload);
+  return subscribeToTable("faq_items", () => {
     fetchFaqData().then(callback);
   });
 };
